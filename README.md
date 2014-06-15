@@ -1,11 +1,12 @@
-digit_recognition
+digit recognition
 =================
 
-Code to recognize digits on a display
+Code to recognize digits on a display.
 
 
 Dependencies
 ============
 
-* Scikit-image
-* Scikit-learn
+* scikit-image
+* scikit-learn
+* matplotlib
