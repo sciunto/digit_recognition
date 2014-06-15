@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 from segmentation import segment_digit
 from machine_learning import load_knowndata, load_unknowndata
-from sklearn import svm, metrics
+from sklearn import svm
 
 if __name__ == '__main__':
     output_dir = 'output'
@@ -49,10 +49,10 @@ if __name__ == '__main__':
     filenames = set([os.path.splitext(os.path.basename(fn))[0].split('-')[0] for fn in filenames])
 
     for filename in filenames:
-        fn = sorted(glob.glob(os.path.join(output_dir, filename  + '*.png')))
+        fn = sorted(glob.glob(os.path.join(output_dir, filename + '*.png')))
         unknown = load_unknowndata(fn)
         # Now predict the value of the digit on the second half:
-        #expected = digits.target[n_samples / 2:]
+        # expected = digits.target[n_samples / 2:]
         predicted = classifier.predict(unknown['data'])
 
         result = ''
@@ -65,4 +65,3 @@ if __name__ == '__main__':
         plt.imshow(image[:150, 56:], cmap=plt.cm.gray_r, interpolation='nearest')
         plt.title('Predicted: %s' % result)
         plt.savefig(os.path.join(results_dir, filename))
-
