@@ -7,11 +7,11 @@
 import os
 
 import numpy as np
-import pylab as pl
+import matplotlib.pyplot as plt
 
 import skimage.io
 
-def load_knowndata(filenames):
+def load_knowndata(filenames, show=False):
     training = {'images': [], 'targets': [], 'data': [], 'name': []}
 
     for index, filename in enumerate(filenames):
@@ -22,11 +22,13 @@ def load_knowndata(filenames):
         training['images'].append(image)
         training['name'].append(filename)
         training['data'].append(image.flatten().tolist())
-        pl.subplot(6, 5, index + 1)
-        pl.axis('off')
-        pl.imshow(image, cmap=pl.cm.gray_r, interpolation='nearest')
-        pl.title('Training: %i' % target)
-
+        if show:
+            plt.subplot(6, 5, index + 1)
+            plt.axis('off')
+            plt.imshow(image, cmap=pl.cm.gray_r, interpolation='nearest')
+            plt.title('Training: %i' % target)
+    if show:
+        plt.show()
     # To apply an classifier on this data, we need to flatten the image, to
     # turn the data in a (samples, feature) matrix:
     training['images'] = np.array(training['images'])

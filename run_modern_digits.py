@@ -15,14 +15,16 @@ from machine_learning import load_knowndata, load_unknowndata
 from sklearn import svm
 
 if __name__ == '__main__':
-    output_dir = 'output'
-    results_dir = 'results'
+    data_bundle = 'modern_digits'
+
+    output_dir = data_bundle + '_isolated_digits'
+    results_dir = data_bundle + '_results'
     for thisdir in (output_dir, results_dir):
         shutil.rmtree(thisdir, ignore_errors=True)
         os.makedirs(thisdir)
     show = False
 
-    for filename in glob.glob('modern_digits/small*.png'):
+    for filename in glob.glob(data_bundle + '_to_detect/*.png'):
         print(filename)
         # Load picture
         image = skimage.io.imread(filename, as_grey=True)
@@ -31,11 +33,8 @@ if __name__ == '__main__':
 
         segment_digit(image, filename, output_dir, black_on_white=False, show=False)
 
-    filenames = sorted(glob.glob('learnt_modern_digits/*-*.png'))
-    training = load_knowndata(filenames)
-    if show:
-        plt.show()
-        plt.close()
+    filenames = sorted(glob.glob(data_bundle + '_learned/*-*.png'))
+    training = load_knowndata(filenames, show)
 
     # Create a classifier: a support vector classifier
     classifier = svm.SVC(gamma=1e-8)
@@ -60,7 +59,7 @@ if __name__ == '__main__':
             result += str(pred)
 
         # Check
-        fn = os.path.join('modern_digits', filename  + '.png')
+        fn = os.path.join(data_bundle + '_to_detect', filename  + '.png')
         image = skimage.io.imread(fn)
         plt.imshow(image[:150, 56:], cmap=plt.cm.gray_r, interpolation='nearest')
         plt.title('Predicted: %s' % result)
