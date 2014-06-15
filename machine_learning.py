@@ -57,7 +57,7 @@ def load_unknowndata(filenames):
 
 
 if __name__ == '__main__':
-    filenames = sorted(glob.glob('learn/*-*.png'))
+    filenames = sorted(glob.glob('recognized_modern_digits/*-*.png'))
     training = load_knowndata(filenames)
     pl.show()
     pl.close()
