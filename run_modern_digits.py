@@ -5,6 +5,7 @@
 
 import os
 import os.path
+import shutil
 import glob
 import skimage.io
 import matplotlib.pyplot as plt
@@ -15,7 +16,10 @@ from sklearn import svm, metrics
 
 if __name__ == '__main__':
     output_dir = 'output'
-    os.makedirs(output_dir)
+    results_dir = 'results'
+    for thisdir in (output_dir, results_dir):
+        shutil.rmtree(thisdir, ignore_errors=True)
+        os.makedirs(thisdir)
     show = False
 
     for filename in glob.glob('modern_digits/small*.png'):
@@ -42,13 +46,9 @@ if __name__ == '__main__':
     filenames = sorted(glob.glob(os.path.join(output_dir, '*.png')))
     unknown = load_unknowndata(filenames)
 
-    filenames = glob.glob(os.path.join(output_dir, '*.png'))
     filenames = set([os.path.splitext(os.path.basename(fn))[0].split('-')[0] for fn in filenames])
 
     for filename in filenames:
-        print('----')
-        print(filename)
-        print('----')
         fn = sorted(glob.glob(os.path.join(output_dir, filename  + '*.png')))
         unknown = load_unknowndata(fn)
         # Now predict the value of the digit on the second half:
@@ -57,15 +57,12 @@ if __name__ == '__main__':
 
         result = ''
         for pred, image, name in zip(predicted, unknown['images'], unknown['name']):
-            print(pred)
-            print(name)
             result += str(pred)
 
         # Check
         fn = os.path.join('modern_digits', filename  + '.png')
         image = skimage.io.imread(fn)
-        # TODO: write it
-        if show:
-            plt.imshow(image[:150, 56:], cmap=plt.cm.gray_r, interpolation='nearest')
-            plt.title('Predicted: %s' % result)
-            plt.show()
+        plt.imshow(image[:150, 56:], cmap=plt.cm.gray_r, interpolation='nearest')
+        plt.title('Predicted: %s' % result)
+        plt.savefig(os.path.join(results_dir, filename))
+
