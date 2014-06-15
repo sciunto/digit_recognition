@@ -4,7 +4,6 @@
 # License:
 
 import os.path
-import glob
 
 import numpy as np
 from scipy import ndimage
@@ -72,7 +71,7 @@ def segment_digit(image, filename, output_dir, digit_height=100, digit_width=52,
 
         # uniq size
         img = np.zeros((100, 75), 'uint8')
-        img[bw[minr:maxr, minc:maxc]!=0] = 255
+        img[bw[minr:maxr, minc:maxc] != 0] = 255
         newname = os.path.splitext(os.path.basename(filename))[0] + '-' + str(item) + '.png'
         skimage.io.imsave(os.path.join(output_dir, newname), img)
         if show:
@@ -80,4 +79,3 @@ def segment_digit(image, filename, output_dir, digit_height=100, digit_width=52,
 
     if show:
         plt.show()
-
