@@ -20,7 +20,7 @@ from skimage.color import label2rgb
 
 
 def segment_digit(image, filename, output_dir, digit_height=100, digit_width=52,
-                  border=7, black_on_white=True, closingpx=4):
+                  border=7, black_on_white=True, closingpx=4, show=False):
     """
     Segement each digit of a picture
 
@@ -47,13 +47,14 @@ def segment_digit(image, filename, output_dir, digit_height=100, digit_width=52,
     clear_border(cleared)
 
     # label image regions
-    label_image = label(cleared)
+    label_image = label(cleared, background=None)
     borders = np.logical_xor(filled, cleared)
     label_image[borders] = -1
     image_label_overlay = label2rgb(label_image, image=image)
 
-    fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(6, 6))
-    ax.imshow(image_label_overlay)
+    if show:
+        fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(6, 6))
+        ax.imshow(image_label_overlay)
 
     regions = regionprops(label_image)
 
@@ -74,21 +75,9 @@ def segment_digit(image, filename, output_dir, digit_height=100, digit_width=52,
         img[bw[minr:maxr, minc:maxc]!=0] = 255
         newname = os.path.splitext(os.path.basename(filename))[0] + '-' + str(item) + '.png'
         skimage.io.imsave(os.path.join(output_dir, newname), img)
-        ax.add_patch(rect)
+        if show:
+            ax.add_patch(rect)
 
-    plt.show()
-
-
-if __name__ == '__main__':
-    #for filename in glob.glob('pictures/small000000*1.png'):
-    for filename in glob.glob('pictures/small000003*0.png'):
-        print(filename)
-        # Load picture
-        image = skimage.io.imread(filename, as_grey=True)
-        # crop picture
-        image = image[0:200, 47:]
-
-        output_dir = 'output'
-        os.makedirs(output_dir)
-        segment_digit(image, filename, output_dir, black_on_white=True)
+    if show:
+        plt.show()
 
