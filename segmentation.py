@@ -19,8 +19,8 @@ from skimage.measure import regionprops, label
 from skimage.color import label2rgb
 
 
-def segment_digit(image, filename, output_dir, digit_height=57, digit_width=33,
-                  border=7, black_on_white=True, closingpx=8):
+def segment_digit(image, filename, output_dir, digit_height=100, digit_width=52,
+                  border=7, black_on_white=True, closingpx=4):
     """
     Segement each digit of a picture
 
@@ -59,29 +59,34 @@ def segment_digit(image, filename, output_dir, digit_height=57, digit_width=33,
 
     for item, region in enumerate(regions):
         # skip small elements
-        if region['Area'] < 100:
+        if region['Area'] < 300:
             continue
 
         # draw rectangle around segmented digits
         minr, minc, maxr, maxc = region['BoundingBox']
-        minr = maxr - digit_height
-        minc = maxc - digit_width
+        #minr = maxr - digit_height
+        #minc = maxc - digit_width
         rect = mpatches.Rectangle((minc, minr), maxc - minc, maxr - minr,
                                   fill=False, edgecolor='red', linewidth=2)
 
+        # uniq size
+        img = np.zeros((100, 75), 'uint8')
+        img[bw[minr:maxr, minc:maxc]!=0] = 255
         newname = os.path.splitext(os.path.basename(filename))[0] + '-' + str(item) + '.png'
-        skimage.io.imsave(os.path.join(output_dir, newname), image[minr:maxr+border, minc:maxc+border])
+        skimage.io.imsave(os.path.join(output_dir, newname), img)
         ax.add_patch(rect)
 
     plt.show()
 
 
 if __name__ == '__main__':
-    for filename in glob.glob('data/im/*9.png'):
+    #for filename in glob.glob('pictures/small000000*1.png'):
+    for filename in glob.glob('pictures/small000003*0.png'):
+        print(filename)
         # Load picture
         image = skimage.io.imread(filename, as_grey=True)
         # crop picture
-        image = image[350:, :]
+        image = image[0:200, 47:]
 
         output_dir = 'output'
         os.makedirs(output_dir)
